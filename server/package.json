@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development concurrently \"yarn run server\" \"cd ../client && yarn start\"",
+    "start": "concurrently \"yarn run server\" \"cd ../client && yarn start\"",
     "server": "nodemon app.js"
   },
   "dependencies": {
