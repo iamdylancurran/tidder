@@ -7,7 +7,12 @@ router.get('/:category', async (req, res, next) => {
     const r = Reddit(req.get('User-Agent'), req.session.refreshToken);
     const { after, before } = req.query || '';
     let items;
-    const config = { limit: 10, after, before };
+    const config = {
+      limit: 10,
+      sr_detail: true,
+      after,
+      before,
+    };
     switch (req.params.category) {
       case 'hot':
         items = await r.getHot(null, config);

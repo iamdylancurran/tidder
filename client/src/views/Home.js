@@ -4,7 +4,7 @@ import LoadingScreen from '../components/LoadingScreen';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import PostCard from '../components/PostCard';
 
 const api = process.env.REACT_APP_API_URL;
 
@@ -39,11 +39,13 @@ const Home = () => {
         <LoadingScreen />
       ) : (
         <Container maxWidth="md">
-          {posts.map((post) => (
-            <Typography variant="body1" align="center" key={post.id} paragraph>
-              {post.title}
-            </Typography>
-          ))}
+          <Grid container direction="row" justify="center" alignItems="center">
+            {posts.map((post) => (
+              <Grid item xs={12} key={post.id}>
+                <PostCard post={post} />
+              </Grid>
+            ))}
+          </Grid>
         </Container>
       )}
     </div>
