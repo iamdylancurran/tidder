@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import { AuthContext } from '../contexts/AuthContext';
 import SignInWithReddit from '../components/SignInWithReddit';
 
 const useStyles = makeStyles(() => ({
@@ -13,6 +15,11 @@ const useStyles = makeStyles(() => ({
 
 const Login = () => {
   const classes = useStyles();
+  const [state, dispatch] = useContext(AuthContext);
+
+  if (state.authenticated) {
+    return <Redirect to="/read/hot" />;
+  }
 
   return (
     <div className={classes.root}>

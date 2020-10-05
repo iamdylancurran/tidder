@@ -5,13 +5,12 @@ const Reddit = require('../config/snoowrap');
 router.get('/:category', async (req, res, next) => {
   try {
     const r = Reddit(req.get('User-Agent'), req.session.refreshToken);
-    const { after, before } = req.query || '';
+    const { after } = req.query || '';
     let items;
     const config = {
       limit: 10,
       sr_detail: true,
       after,
-      before,
     };
     switch (req.params.category) {
       case 'hot':

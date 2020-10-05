@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import Home from './views/Home';
 import Login from './views/Login';
@@ -13,14 +14,24 @@ function App() {
     dispatch({
       type: 'LOGIN',
     }).finally(() => setLoading(false));
+    // eslint-disable-next-line
   }, []);
 
   return (
     <div className="App">
       {loading ? (
-        <LoadingScreen />
+        <LoadingScreen height="100vh" />
       ) : (
-        <>{state.authenticated ? <Home /> : <Login />}</>
+        <Router>
+          <Switch>
+            <Route exact path="/">
+              <Login />
+            </Route>
+            <Route path="/read/:category">
+              <Home />
+            </Route>
+          </Switch>
+        </Router>
       )}
     </div>
   );

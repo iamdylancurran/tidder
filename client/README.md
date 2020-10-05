@@ -1,68 +1,27 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# What is it?
 
-## Available Scripts
+Tidder is a full-stack application built to work with Reddit's OAuth API. You click sign in, allow Tidder access to your account, and you can now read Reddit in a completely different UI/UX.
 
-In the project directory, you can run:
+# Stage
 
-### `yarn start`
+Tidder is in an EXTREME stage of work-in-progress. I am essentially re-building Reddit from scratch, and have many limitations of the Reddit API (while decent) to work with. The code isn't perfect, but it does work right now. If you set up a Reddit app in your preferences and input the details into the relevant .envs, it should work out of the box.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Browser compatibility is not a focus right now either, everything is tested in the latest Chrome version to-date (85.0), and I haven't delved into the other browsers at this point. Down the line, I do plan on adding full latest-browser support, but not old versions such as IE11 (why ruin a fun project like that?).
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+# Focus
 
-### `yarn test`
+The focus of this project is both a test of my UI/UX skills, and a showcase of functional React programming. It is NOT intended to be a production instance for use by the masses, just an interesting project showing how to work with an Oauth API.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Stack
 
-### `yarn build`
+The front-end client is built in React, bootstrapped by CRA. I considered writing all the CSS from scratch, but then decided not to in favour of the accessibility principles Material-UI have already implemented for me. Plus, it looks pretty nice, and is quick to work with. It's not as customizable as I'd like, but it gets the job done. I also decided against Redux in favour of React's Context API, both because Redux would increase the workload, and because I don't really need a bloated state manager for a reader app.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The back-end is a scaffolded Node.js/Express server, using Passport for authentication. I am using a Reddit API wrapper (Snoowrap) to accelerate development time, although I might create my own wrapper down the line as it's much slower than running my own requests.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+A MongoDB instance is attached (I just used a free Atlas instance), but it's barebones and only used in the Passport authentication. I plan on separating those in the future, and making this database-less.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Authentication / Privacy
 
-### `yarn eject`
+The app does not collect/store any information outside of a Reddit user ID, and a Reddit username. As said before, I will be removing even this in the future. Any information, such as the access tokens and refresh tokens, are stored in secure cookies.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Only the scopes absolutely necessary for the app to function are requested from Reddit.

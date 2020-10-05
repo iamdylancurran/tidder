@@ -93,7 +93,7 @@ const theme = createMuiTheme({
       secondary: fade(greys[900], 0.6),
     },
     background: {
-      default: '#fff',
+      default: '#F7FAFC',
     },
   },
 });
