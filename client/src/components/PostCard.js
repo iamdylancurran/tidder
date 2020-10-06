@@ -122,9 +122,16 @@ const PostCard = ({ post }) => {
             <Typography
               variant="body2"
               color="textSecondary"
+              style={{ display: 'inline-block', marginRight: '0.5rem' }}
+            >
+              {TimeSince(post.created_utc)} •{' '}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="textSecondary"
               style={{ display: 'inline-block' }}
             >
-              {TimeSince(post.created_utc)}
+              {post.post_hint || 'self'}
             </Typography>
           </Box>
         </Box>
@@ -209,7 +216,7 @@ const ImageContent = ({ showContent, setShowContent, post }) => {
       </Grid>
       {showContent ? (
         <img
-          src={post.preview.images[0].source.url}
+          src={post.url || post.preview.images[0].source.url}
           className={classes.cardImage}
           alt={post.title}
         />
@@ -260,14 +267,47 @@ const LinkContent = ({ post }) => {
             {post.title}
           </Typography>
         </Link>
-        <Grid item xs={2} sm={1}>
-          <img
-            src={post.preview.images[0].resolutions[0].url}
-            className={classes.cardPreviewImage}
-            alt={post.title}
-          />
-        </Grid>
       </Grid>
+      <Grid item xs={2} sm={1}>
+        <img
+          src={post.preview.images[0].resolutions[0].url}
+          className={classes.cardPreviewImage}
+          alt={post.title}
+        />
+      </Grid>
+    </Grid>
+  );
+};
+
+const HostedVideoContent = ({ showContent, setShowContent, post }) => {
+  const classes = useStyles();
+
+  return (
+    <Grid container direction="row">
+      <Grid item xs={10} sm={11}>
+        <Typography variant="body1" color="textPrimary" paragraph>
+          {post.title}
+        </Typography>
+        <Button
+          variant="outlined"
+          color="primary"
+          size="small"
+          onClick={() => setShowContent(!showContent)}
+          startIcon={showContent ? <RemoveIcon /> : <AddIcon />}
+        >
+          {showContent ? 'Hide Video' : 'Reveal Video'}
+        </Button>
+      </Grid>
+      <Grid item xs={2} sm={1} onClick={() => setShowContent(!showContent)}>
+        <img
+          src={post.preview.images[0].resolutions[0].url}
+          className={classes.cardPreviewImage}
+          alt={post.title}
+        />
+      </Grid>
+      {showContent ? (
+        <video src={post.media.reddit_video.scrubber_media_url} />
+      ) : null}
     </Grid>
   );
 };
