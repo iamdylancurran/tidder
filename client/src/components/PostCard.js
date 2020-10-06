@@ -91,7 +91,13 @@ const PostCard = ({ post }) => {
           />
         );
       case 'hosted:video':
-        return <p>hosted video</p>;
+        return (
+          <HostedVideoContent
+            showContent={showContent}
+            setShowContent={setShowContent}
+            post={post}
+          />
+        );
       case 'self':
         return <p>self</p>;
       default:
