@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     width: '100%',
     borderRadius: 0,
-    borderBottom: '1px solid rgba(0,0,0,0.12)',
+    borderBottom: '2px solid rgba(0,0,0,0.12)',
     padding: theme.spacing(0.1, 0.5),
   },
   cardContent: {
@@ -81,7 +81,7 @@ const PostCard = ({ post }) => {
           />
         );
       case 'link':
-        return <p>link</p>;
+        return <LinkContent post={post} />;
       case 'rich:video':
         return (
           <RichVideoContent
@@ -245,6 +245,29 @@ const RichVideoContent = ({ showContent, setShowContent, post }) => {
         />
       </Grid>
       {showContent ? <>{ReactHtmlParser(post.media_embed.content)}</> : null}
+    </Grid>
+  );
+};
+
+const LinkContent = ({ post }) => {
+  const classes = useStyles();
+
+  return (
+    <Grid container direction="row">
+      <Grid item xs={10} sm={11}>
+        <Link href={post.url} underline="none" target="_blank">
+          <Typography variant="body1" color="textPrimary" paragraph>
+            {post.title}
+          </Typography>
+        </Link>
+        <Grid item xs={2} sm={1}>
+          <img
+            src={post.preview.images[0].resolutions[0].url}
+            className={classes.cardPreviewImage}
+            alt={post.title}
+          />
+        </Grid>
+      </Grid>
     </Grid>
   );
 };
