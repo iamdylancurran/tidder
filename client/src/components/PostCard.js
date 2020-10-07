@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
+import Avatar from '@material-ui/core/Avatar';
 import CommentIcon from '@material-ui/icons/ChatBubbleOutlineOutlined';
 import ShareIcon from '@material-ui/icons/ShareOutlined';
 import AddIcon from '@material-ui/icons/Add';
@@ -45,8 +46,11 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 auto',
     paddingTop: '2rem',
   },
-  headerBox: {
-    marginBottom: theme.spacing(2),
+  cardHeaderBox: {
+    marginBottom: theme.spacing(1),
+  },
+  cardHeaderElement: {
+    marginRight: theme.spacing(0.5),
   },
   contentActionsSection: {
     marginRight: '1em',
@@ -98,8 +102,6 @@ const PostCard = ({ post }) => {
             post={post}
           />
         );
-      case 'self':
-        return <p>self</p>;
       default:
         break;
     }
@@ -108,38 +110,40 @@ const PostCard = ({ post }) => {
   return (
     <Card className={classes.card}>
       <CardContent className={classes.cardContent}>
-        <Box display="flex" alignItems="center" className={classes.headerBox}>
-          <img
-            alt="Unfortunately unable to assign alts."
+        <Box
+          display="flex"
+          flexGrow={1}
+          alignItems="center"
+          className={classes.cardHeaderBox}
+        >
+          <Avatar
             src={post.sr_detail.icon_img || '/images/null_reddit_sr_icon.png'}
-            className={classes.circleSubredditImage}
+            className={classes.cardHeaderElement}
           />
-          <Box>
-            <Typography variant="body2" color="secondary">
-              {post.subreddit}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="textPrimary"
-              style={{ display: 'inline-block', marginRight: '0.5rem' }}
-            >
-              {post.author} •{' '}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              style={{ display: 'inline-block', marginRight: '0.5rem' }}
-            >
-              {TimeSince(post.created_utc)} •{' '}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              style={{ display: 'inline-block' }}
-            >
-              {post.post_hint || 'self'}
-            </Typography>
-          </Box>
+          <Typography
+            variant="body2"
+            color="secondary"
+            display="inline"
+            className={classes.cardHeaderElement}
+          >
+            {post.subreddit}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            display="inline"
+            className={classes.cardHeaderElement}
+          >
+            • {post.author} •
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            display="inline"
+            className={classes.cardHeaderElement}
+          >
+            {TimeSince(post.created_utc)}
+          </Typography>
         </Box>
 
         {SwitchPostType()}
@@ -169,6 +173,14 @@ const PostCard = ({ post }) => {
         </Box>
       </CardContent>
     </Card>
+  );
+};
+
+const Title = ({ title }) => {
+  return (
+    <Typography variant="body1" color="textPrimary" paragraph>
+      {title}
+    </Typography>
   );
 };
 
