@@ -8,8 +8,11 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
 import CommentIcon from '@material-ui/icons/ChatBubbleOutlineOutlined';
 import ShareIcon from '@material-ui/icons/ShareOutlined';
+import ExpandIcon from '@material-ui/icons/ExpandMoreRounded';
+import ShrinkIcon from '@material-ui/icons/ExpandLessRounded';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ReactHtmlParser from 'react-html-parser';
@@ -27,18 +30,6 @@ const useStyles = makeStyles((theme) => ({
     '&:last-child': {
       paddingBottom: theme.spacing(0.5),
     },
-  },
-  circleSubredditImage: {
-    borderRadius: '50%',
-    width: '64px',
-    height: 'auto',
-    marginRight: theme.spacing(1),
-  },
-  cardPreviewImage: {
-    width: '100%',
-    height: 'auto',
-    margin: '0 auto',
-    cursor: 'pointer',
   },
   cardImage: {
     width: '100%',
@@ -65,6 +56,13 @@ const PostCard = ({ post }) => {
   const classes = useStyles();
   const [showContent, setShowContent] = useState(false);
 
+  const cardHeaderElementConfig = {
+    variant: 'body2',
+    display: 'inline',
+    color: 'textSecondary',
+    className: classes.cardHeaderElement,
+  };
+
   function SwitchPostType() {
     if (post.is_self) {
       return (
@@ -84,8 +82,6 @@ const PostCard = ({ post }) => {
             post={post}
           />
         );
-      case 'link':
-        return <LinkContent post={post} />;
       case 'rich:video':
         return (
           <RichVideoContent
@@ -120,33 +116,54 @@ const PostCard = ({ post }) => {
             src={post.sr_detail.icon_img || '/images/null_reddit_sr_icon.png'}
             className={classes.cardHeaderElement}
           />
-          <Typography
-            variant="body2"
-            color="secondary"
-            display="inline"
-            className={classes.cardHeaderElement}
-          >
+          <Typography {...cardHeaderElementConfig} color="secondary">
             {post.subreddit}
           </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            display="inline"
-            className={classes.cardHeaderElement}
-          >
+          <Typography {...cardHeaderElementConfig}>
             • {post.author} •
           </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            display="inline"
-            className={classes.cardHeaderElement}
-          >
-            {TimeSince(post.created_utc)}
+          <Typography {...cardHeaderElementConfig}>
+            {TimeSince(post.created_utc)} •
+          </Typography>
+          <Typography {...cardHeaderElementConfig}>
+            {post.post_hint || 'self'}
           </Typography>
         </Box>
 
-        {SwitchPostType()}
+        <Grid container direction="row">
+          <Grid item xs={12}>
+            {post.post_hint === 'link' ? (
+              <Link href={post.url} underline="none" taget="_blank">
+                <Typography variant="body1" color="textPrimary" paragraph>
+                  {post.title}
+                </Typography>
+              </Link>
+            ) : (
+              <>
+                <Typography
+                  variant="body1"
+                  color="textPrimary"
+                  paragraph={Boolean(post.is_self)}
+                >
+                  {post.title}
+                </Typography>
+                {post.post_hint !== 'link' && !post.is_self && (
+                  <IconButton
+                    color="primary"
+                    edge="start"
+                    onClick={() => setShowContent(!showContent)}
+                  >
+                    {showContent ? <ShrinkIcon /> : <ExpandIcon />}
+                  </IconButton>
+                )}
+              </>
+            )}
+          </Grid>
+
+          <Grid item xs={12}>
+            {SwitchPostType()}
+          </Grid>
+        </Grid>
 
         <Box display="flex" style={{ paddingTop: '1rem' }}>
           <Box
@@ -154,7 +171,7 @@ const PostCard = ({ post }) => {
             alignItems="center"
             className={classes.contentActionsSection}
           >
-            <CommentIcon className={classes.contentActionsIcons} />
+            <CommentIcon edge="start" className={classes.contentActionsIcons} />
             <Typography variant="body2" color="textSecondary" display="inline">
               {post.num_comments} Comments
             </Typography>
@@ -176,62 +193,28 @@ const PostCard = ({ post }) => {
   );
 };
 
-const Title = ({ title }) => {
-  return (
-    <Typography variant="body1" color="textPrimary" paragraph>
-      {title}
-    </Typography>
-  );
-};
-
 const SelfContent = ({ showContent, setShowContent, post }) => {
   return (
-    <Box>
-      <Typography variant="body1" color="textPrimary" paragraph>
-        {post.title}
-      </Typography>
-      <Box
-        style={{ paddingTop: '1rem' }}
-        onClick={() => setShowContent(!showContent)}
-      >
-        {showContent ? (
-          <Markdown noWrap={!showContent}>{post.selftext}</Markdown>
-        ) : (
-          <Typography variant="body2" color="textPrimary" noWrap>
-            {post.selftext}
-          </Typography>
-        )}
-      </Box>
+    <Box
+      display="flex"
+      flexGrow={1}
+      onClick={() => setShowContent(!showContent)}
+    >
+      {showContent && post.selftext ? (
+        <Markdown noWrap={!showContent}>{post.selftext}</Markdown>
+      ) : (
+        <Typography variant="body2" color="textPrimary" noWrap>
+          {post.selftext}
+        </Typography>
+      )}
     </Box>
   );
 };
 
-const ImageContent = ({ showContent, setShowContent, post }) => {
+const ImageContent = ({ showContent, post }) => {
   const classes = useStyles();
-
   return (
-    <Grid container direction="row">
-      <Grid item xs={10} sm={11}>
-        <Typography variant="body1" color="textPrimary" paragraph>
-          {post.title}
-        </Typography>
-        <Button
-          variant="outlined"
-          color="primary"
-          size="small"
-          onClick={() => setShowContent(!showContent)}
-          startIcon={showContent ? <RemoveIcon /> : <AddIcon />}
-        >
-          {showContent ? 'Hide Image' : 'Reveal Image'}
-        </Button>
-      </Grid>
-      <Grid item xs={2} sm={1} onClick={() => setShowContent(!showContent)}>
-        <img
-          src={post.preview.images[0].resolutions[0].url}
-          className={classes.cardPreviewImage}
-          alt={post.title}
-        />
-      </Grid>
+    <>
       {showContent ? (
         <img
           src={post.url || post.preview.images[0].source.url}
@@ -239,94 +222,23 @@ const ImageContent = ({ showContent, setShowContent, post }) => {
           alt={post.title}
         />
       ) : null}
-    </Grid>
+    </>
   );
 };
 
-const RichVideoContent = ({ showContent, setShowContent, post }) => {
-  const classes = useStyles();
-
+const RichVideoContent = ({ showContent, post }) => {
   return (
-    <Grid container direction="row">
-      <Grid item xs={10} sm={11}>
-        <Typography variant="body1" color="textPrimary" paragraph>
-          {post.title}
-        </Typography>
-        <Button
-          variant="outlined"
-          color="primary"
-          size="small"
-          onClick={() => setShowContent(!showContent)}
-          startIcon={showContent ? <RemoveIcon /> : <AddIcon />}
-        >
-          {showContent ? 'Hide Video' : 'Reveal Video'}
-        </Button>
-      </Grid>
-      <Grid item xs={2} sm={1} onClick={() => setShowContent(!showContent)}>
-        <img
-          src={post.preview.images[0].resolutions[0].url}
-          className={classes.cardPreviewImage}
-          alt={post.title}
-        />
-      </Grid>
-      {showContent ? <>{ReactHtmlParser(post.media_embed.content)}</> : null}
-    </Grid>
+    <>{showContent ? <>{ReactHtmlParser(post.media_embed.content)}</> : null}</>
   );
 };
 
-const LinkContent = ({ post }) => {
-  const classes = useStyles();
-
+const HostedVideoContent = ({ showContent, post }) => {
   return (
-    <Grid container direction="row">
-      <Grid item xs={10} sm={11}>
-        <Link href={post.url} underline="none" target="_blank">
-          <Typography variant="body1" color="textPrimary" paragraph>
-            {post.title}
-          </Typography>
-        </Link>
-      </Grid>
-      <Grid item xs={2} sm={1}>
-        <img
-          src={post.preview.images[0].resolutions[0].url}
-          className={classes.cardPreviewImage}
-          alt={post.title}
-        />
-      </Grid>
-    </Grid>
-  );
-};
-
-const HostedVideoContent = ({ showContent, setShowContent, post }) => {
-  const classes = useStyles();
-
-  return (
-    <Grid container direction="row">
-      <Grid item xs={10} sm={11}>
-        <Typography variant="body1" color="textPrimary" paragraph>
-          {post.title}
-        </Typography>
-        <Button
-          variant="outlined"
-          color="primary"
-          size="small"
-          onClick={() => setShowContent(!showContent)}
-          startIcon={showContent ? <RemoveIcon /> : <AddIcon />}
-        >
-          {showContent ? 'Hide Video' : 'Reveal Video'}
-        </Button>
-      </Grid>
-      <Grid item xs={2} sm={1} onClick={() => setShowContent(!showContent)}>
-        <img
-          src={post.preview.images[0].resolutions[0].url}
-          className={classes.cardPreviewImage}
-          alt={post.title}
-        />
-      </Grid>
+    <>
       {showContent ? (
         <video src={post.media.reddit_video.scrubber_media_url} />
       ) : null}
-    </Grid>
+    </>
   );
 };
 
